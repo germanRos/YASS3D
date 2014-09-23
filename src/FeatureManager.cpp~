@@ -1,0 +1,34 @@
+#include "FeatureManager.hpp"
+
+void FeatureManager::addFeatureExtractor(LocalFeature* lf)
+{
+	featureExtractors.push_back(lf);
+}
+
+void FeatureManager::extractFeatures(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud, vector< vector< vector<double> > >& featuresTrainingClouds)
+{
+	// Dims = n_voxels x feature_size*N_features
+	vector< vector<double> > features;
+	//for each feature extractor...
+	for(int f=0; f<featureExtractors.size(); f++)
+	{
+		// Dims = n_voxels x feature_size
+		vector< vector<double> > featureF;
+		LocalFeature* fExtractor = featureExtractors[f];
+		fExtractor->computeFeature(cloud, featureF);
+
+		//if it's the first time we initialize the structure
+		if(features.empty())
+		{
+			for(int v=0; v<featureF.size(); v++)
+				features.push_back(vector<double>());
+		}
+		
+		//for each voxel we add the current feature
+		for(int v=0; v<featureF.size(); v++)
+			features[v].insert(features[v].end(), featureF[v].begin(), featureF[v].end());
+	}
+
+			
+	featuresTrainingClouds.push_back(features);
+}

@@ -1,0 +1,58 @@
+#include "CurvatureWrapper.hpp"
+
+void CurvatureWrapper::computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud, vector< vector<double> >& features)
+{	
+	//compute normals
+	pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
+	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
+	computeNormals(cloud, radiusNormal, normals, tree);
+
+	//compute 
+	pcl::PointCloud<pcl::PrincipalCurvatures>::Ptr principal_curvatures = pcl::PointCloud<pcl::PrincipalCurvatures>::Ptr(new pcl::PointCloud<pcl::PrincipalCurvatures>);
+	principal_curvatures_estimation = PrincipalCurvaturesEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::PrincipalCurvatures>();
+	principal_curvatures_estimation.setInputCloud(cloud);
+	principal_curvatures_estimation.setInputNormals(normals);
+
+	principal_curvatures_estimation.setSearchMethod (tree);
+	principal_curvatures_estimation.setRadiusSearch (radiusCurvature);
+	principal_curvatures_estimation.compute (*principal_curvatures);
+
+	//copy features to the output vector
+	for(int i=0; i<principal_curvatures->points.size(); i++)
+	{
+		pcl::PrincipalCurvatures descriptor = principal_curvatures->points[i];
+
+		//cout << "(" << descriptor.principal_curvature_x << ", " << descriptor.principal_curvature_y << ", " << descriptor.principal_curvature_z << ")" << endl;
+		vector<double> desc;
+		desc.push_back(descriptor.principal_curvature_x);
+		desc.push_back(descriptor.principal_curvature_y);
+		desc.push_back(descriptor.principal_curvature_z);
+		features.push_back(desc);
+	}
+}
+
+void CurvatureWrapper::computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud,  pcl::PointCloud<pcl::Normal>::Ptr& normals, vector< vector<double> >& features)
+{
+	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>);
+
+	//compute 
+	pcl::PointCloud<pcl::PrincipalCurvatures>::Ptr principal_curvatures = pcl::PointCloud<pcl::PrincipalCurvatures>::Ptr(new pcl::PointCloud<pcl::PrincipalCurvatures>);
+	principal_curvatures_estimation = PrincipalCurvaturesEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::PrincipalCurvatures>();
+	principal_curvatures_estimation.setInputCloud(cloud);
+	principal_curvatures_estimation.setInputNormals (normals);
+
+	principal_curvatures_estimation.setSearchMethod (tree);
+	principal_curvatures_estimation.setRadiusSearch (radiusCurvature);
+	principal_curvatures_estimation.compute (*principal_curvatures);
+
+	//copy features to the output vector
+	for(int i=0; i<principal_curvatures->points.size(); i++)
+	{
+		pcl::PrincipalCurvatures descriptor = principal_curvatures->points[i];
+		vector<double> desc;
+		desc.push_back(descriptor.principal_curvature_x);
+		desc.push_back(descriptor.principal_curvature_y);
+		desc.push_back(descriptor.principal_curvature_z);
+		features.push_back(desc);
+	}
+}

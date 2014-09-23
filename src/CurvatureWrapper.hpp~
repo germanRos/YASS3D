@@ -1,0 +1,26 @@
+#ifndef _CURVATURE_WRAPPER_HPP_
+	#define _CURVATURE_WRAPPER_HPP_
+
+	#include "LocalFeature.hpp"
+
+	class CurvatureWrapper : public LocalFeature
+	{
+		public:
+			CurvatureWrapper(double radiusNormal=0.03, double radiusCurvature=1.0)
+			{
+				this->radiusNormal = radiusNormal;
+				this->radiusCurvature = radiusCurvature;
+			}
+
+			void computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud, vector< vector<double> >& features);
+		
+			void computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud,  pcl::PointCloud<pcl::Normal>::Ptr& normals, vector< vector<double> >& features);
+			
+
+		private:
+			double radiusNormal;
+			double radiusCurvature;
+
+			pcl::PrincipalCurvaturesEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::PrincipalCurvatures> principal_curvatures_estimation;
+	};
+#endif

@@ -1,0 +1,17 @@
+#ifndef _FEATURE_MANAGER_HPP_
+	#define _FEATURE_MANAGER_HPP_
+
+	#include "LocalFeature.hpp"
+
+	class FeatureManager
+	{
+		public:
+			void addFeatureExtractor(LocalFeature* lf);
+
+			void extractFeatures(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud, vector< vector< vector<double> > >& featuresTrainingClouds);
+
+		private:
+			vector<LocalFeature*> featureExtractors;
+	};
+
+#endif

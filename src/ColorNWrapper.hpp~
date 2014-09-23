@@ -1,0 +1,16 @@
+#ifndef _COLORN_WRAPPER_HPP_
+	#define _COLORN_WRAPPER_HPP_
+
+	#include "LocalFeature.hpp"
+
+	class ColorNWrapper : public LocalFeature
+	{
+		public:
+			void computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud, vector< vector<double> >& features);
+		
+			void computeFeature(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud,  pcl::PointCloud<pcl::Normal>::Ptr& normals, vector< vector<double> >& features);
+			
+
+		private:
+	};
+#endif
