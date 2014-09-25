@@ -4,7 +4,7 @@ YASS3D
 Yet Another Semantic Segmentator in 3D
 
 
-USES
+Requirements
 --------
 
 1. PCL
